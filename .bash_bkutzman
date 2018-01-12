@@ -1,0 +1,40 @@
+alias ll='ls -l'
+alias full='readlink --canonicalize'
+alias t='tmux'
+alias ta='tmux attach -t'
+alias t='tmux'
+
+export PATH=.:$PATH
+export EDITOR=/usr/bin/vim
+
+# Reports the amount of time the last command took                              
+# http://jakemccrary.com/blog/2015/05/03/put-the-last-commands-run-time-in-your-bash-prompt/
+function timer_start {                                                          
+  timer=${timer:-$SECONDS}                                                      
+}                                                                               
+                                                                                
+function timer_stop {                                                           
+  timer_show=$(($SECONDS - $timer))                                             
+  unset timer                                                                   
+}                                                                               
+                                                                                
+trap 'timer_start' DEBUG                                                        
+                                                                                
+if [ "$PROMPT_COMMAND" == "" ]; then                                            
+  PROMPT_COMMAND="timer_stop"                                                   
+else                                                                            
+  PROMPT_COMMAND="$PROMPT_COMMAND; timer_stop"                                  
+fi
+
+# Colors in prompt from https://wiki.archlinux.org/index.php/Color_Bash_Prompt  
+PS1="\
+$(if [[ ${EUID} == 0 ]]; then \
+    echo '\[\033[01;31m\]\t ${timer_show}s'; \
+  else \
+    echo '\[\033[01;32m\]\t ${timer_show}s'; \
+fi)\
+\033[01;34m \w \$([[ \$? != 0 ]] && echo \"\[\033[01;31m\]:(\[\033[01;34m\] \")\n\\$\[\033[00m\] "
+
+function define {                                                               
+  echo $1 | aspell pipe | grep -v International                                 
+}  
