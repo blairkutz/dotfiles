@@ -38,3 +38,7 @@ fi)\
 function define {                                                               
   echo $1 | aspell pipe | grep -v International                                 
 }  
+
+export TZ='America/Los_Angeles'
+
+set -o vi
